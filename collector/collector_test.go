@@ -51,14 +51,14 @@ func TestCollect(t *testing.T) {
 
 		expecteds := []MetricResult{
 			{labels: labelMap{}, value: float64(1), metricType: dto.MetricType_GAUGE},
-			{labels: labelMap{"area": "northern_taiwan"}, value: float64(1079.9), metricType: dto.MetricType_GAUGE},
-			{labels: labelMap{"area": "northern_taiwan"}, value: float64(1131.9), metricType: dto.MetricType_GAUGE},
-			{labels: labelMap{"area": "central_taiwan"}, value: float64(1052.3), metricType: dto.MetricType_GAUGE},
-			{labels: labelMap{"area": "central_taiwan"}, value: float64(973.3), metricType: dto.MetricType_GAUGE},
-			{labels: labelMap{"area": "southern_taiwn"}, value: float64(1140.5), metricType: dto.MetricType_GAUGE},
-			{labels: labelMap{"area": "southern_taiwn"}, value: float64(1125.1), metricType: dto.MetricType_GAUGE},
-			{labels: labelMap{"area": "eastern_taiwan"}, value: float64(3.8), metricType: dto.MetricType_GAUGE},
-			{labels: labelMap{"area": "eastern_taiwan"}, value: float64(46.1), metricType: dto.MetricType_GAUGE},
+			{labels: labelMap{"area": "northern_taiwan"}, value: float64(1079.9 * tenMw), metricType: dto.MetricType_GAUGE},
+			{labels: labelMap{"area": "northern_taiwan"}, value: float64(1131.9 * tenMw), metricType: dto.MetricType_GAUGE},
+			{labels: labelMap{"area": "central_taiwan"}, value: float64(1052.3 * tenMw), metricType: dto.MetricType_GAUGE},
+			{labels: labelMap{"area": "central_taiwan"}, value: float64(973.3 * tenMw), metricType: dto.MetricType_GAUGE},
+			{labels: labelMap{"area": "southern_taiwn"}, value: float64(1140.5 * tenMw), metricType: dto.MetricType_GAUGE},
+			{labels: labelMap{"area": "southern_taiwn"}, value: float64(1125.1 * tenMw), metricType: dto.MetricType_GAUGE},
+			{labels: labelMap{"area": "eastern_taiwan"}, value: float64(3.8 * tenMw), metricType: dto.MetricType_GAUGE},
+			{labels: labelMap{"area": "eastern_taiwan"}, value: float64(46.1 * tenMw), metricType: dto.MetricType_GAUGE},
 		}
 		for _, expected := range expecteds {
 			actual := readMetric(<-ch)

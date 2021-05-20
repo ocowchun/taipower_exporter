@@ -35,8 +35,8 @@ func New() *Collector {
 	return &Collector{
 		httpClient: httpClient,
 		metrics: map[string]*prometheus.Desc{
-			"power_consumption": newMetric("power_consumption", "Power Consumption"),
-			"power_generation":  newMetric("power_generation", "Power Generation"),
+			"power_consumption_watts": newMetric("power_consumption_watts", "Number of watts consumed"),
+			"power_generation_watts":  newMetric("power_generation_watts", "Number of watts generated"),
 		},
 		upMetric: prometheus.NewGauge(prometheus.GaugeOpts{
 			Name: "up",
@@ -49,6 +49,7 @@ const (
 	dataEndpoint = "https://www.taipower.com.tw/d006/loadGraph/loadGraph/data/genloadareaperc.csv"
 	serverUp     = 1
 	serverDown   = 0
+	tenMw        = 10000000
 )
 
 // Describe sends the super-set of all possible descriptors of Taipower metrics
@@ -116,15 +117,15 @@ func (c *Collector) parseStats(ch chan<- prometheus.Metric, data []byte) error {
 		if err != nil {
 			return err
 		}
-		ch <- prometheus.MustNewConstMetric(c.metrics["power_consumption"],
-			prometheus.GaugeValue, consumption, area)
+		ch <- prometheus.MustNewConstMetric(c.metrics["power_consumption_watts"],
+			prometheus.GaugeValue, consumption*tenMw, area)
 
 		generation, err := strconv.ParseFloat(parts[i*2+2], 64)
 		if err != nil {
 			return err
 		}
-		ch <- prometheus.MustNewConstMetric(c.metrics["power_generation"],
-			prometheus.GaugeValue, generation, area)
+		ch <- prometheus.MustNewConstMetric(c.metrics["power_generation_watts"],
+			prometheus.GaugeValue, generation*tenMw, area)
 	}
 
 	return nil
