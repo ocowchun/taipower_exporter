@@ -21,6 +21,7 @@ func newMetric(metricName string, docString string) *prometheus.Desc {
 type Collector struct {
 	httpClient *http.Client
 	metrics    map[string]*prometheus.Desc
+	upMetric   prometheus.Gauge
 	mutex      sync.Mutex
 }
 
@@ -37,15 +38,23 @@ func New() *Collector {
 			"power_consumption": newMetric("power_consumption", "Power Consumption"),
 			"power_generation":  newMetric("power_generation", "Power Generation"),
 		},
+		upMetric: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "up",
+			Help: "Status of the last metric scrape",
+		}),
 	}
 }
 
-const dataEndpoint string = "https://www.taipower.com.tw/d006/loadGraph/loadGraph/data/genloadareaperc.csv"
+const (
+	dataEndpoint = "https://www.taipower.com.tw/d006/loadGraph/loadGraph/data/genloadareaperc.csv"
+	serverUp     = 1
+	serverDown   = 0
+)
 
 // Describe sends the super-set of all possible descriptors of Taipower metrics
 // to the provided channel.
 func (c *Collector) Describe(ch chan<- *prometheus.Desc) {
-	// ch <- c.upMetric.Desc()
+	ch <- c.upMetric.Desc()
 
 	for _, m := range c.metrics {
 		ch <- m
@@ -59,9 +68,14 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 
 	data, err := c.scrape()
 	if err != nil {
+		c.upMetric.Set(serverDown)
+		ch <- c.upMetric
 		log.Printf("Error getting stats: %v", err)
 		return
 	}
+
+	c.upMetric.Set(serverUp)
+	ch <- c.upMetric
 
 	if err := c.parseStats(ch, data); err != nil {
 		log.Printf("Error parsing stats: %v", err)

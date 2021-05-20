@@ -50,6 +50,7 @@ func TestCollect(t *testing.T) {
 		c.Collect(ch)
 
 		expecteds := []MetricResult{
+			{labels: labelMap{}, value: float64(1), metricType: dto.MetricType_GAUGE},
 			{labels: labelMap{"area": "northern_taiwan"}, value: float64(1079.9), metricType: dto.MetricType_GAUGE},
 			{labels: labelMap{"area": "northern_taiwan"}, value: float64(1131.9), metricType: dto.MetricType_GAUGE},
 			{labels: labelMap{"area": "central_taiwan"}, value: float64(1052.3), metricType: dto.MetricType_GAUGE},
